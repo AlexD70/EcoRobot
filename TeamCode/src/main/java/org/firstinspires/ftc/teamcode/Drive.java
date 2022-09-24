@@ -1,38 +1,72 @@
+package org.firstinspires.ftc.teamcode;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.Range;
 
-@TeleOp( name = "TeleOp", group = "EcoRobot")
-class Drive extends LinearOpMode {
+@TeleOp
+public class Drive extends LinearOpMode {
 
-    DcMotor lf, rf, lb, rb; // we should make an array but i cant do it rn cause i dont hv access to a laptop atm
+    public ControllerInput controller;
 
-    public boolean _init() { 
-	this.lf = this.hardwareMap.get(DcMotor.class, "lf");
-	this.rf = this.hardwareMap.get(DcMotor.class, "rf");
-	this.lb = this.hardwareMap.get(DcMotor.class, "lb");
-	this.rb = this.hardwareMap.get(DcMotor.class, "rb");
-	// encoders
-	// runmodes (brake/float)
-	// TODO remeber to check for errors, print telemetry/robot logs and return true
-	// set power 0 to everything, get lifter and claw to position 0
-    }
+    private Wheels wheels;
+    private Glisiera slider; //funny story am uitat cum se spune la glisiera in engleza
+    private Gheara claw;
 
     @Override
-    public void runOpMode(){
-         _init();
+    public void runOpMode() throws InterruptedException {
 
-	 waitForStart();
+        controller = new ControllerInput(gamepad1);
 
-	 while (opModeIsActive()) {
-              // handleDriving();
-	      // handleMechanisms();
-	 }
+        wheels = new Wheels(hardwareMap);
+        slider = new Glisiera(hardwareMap);
+        claw = new Gheara(hardwareMap);
+
+        waitForStart();
+
+        while(opModeIsActive()){
+            controller.update();
+
+            //ridica glisiera in teorie
+            while(controller.right_trigger != 0){
+                slider.position(Glisiera.Height.HIGH);
+            }
+
+            //coboara glisiera in teorie
+            while(controller.left_trigger != 0){
+                slider.position(Glisiera.Height.DOWN);
+            }
+
+            //deschide gheara in teorie
+            if(controller.AOnce()){
+                claw.open();
+            }
+
+            //in teorie inchide gheara
+            if(controller.BOnce()){
+                claw.close();
+            }
+
+            move();
+
+        }
     }
 
-    public void handleDriving(){}
-    public void handleMechanisms(){}
+    public void move(){
+
+        double forward = -controller.right_stick_y;
+        double strafe = controller.right_stick_x;
+        double turn = controller.left_stick_x;
+
+        double v = forward + strafe + turn;
+        double v1 = forward - strafe - turn;
+        double v2 = forward - strafe + turn;
+        double v3 = forward + strafe - turn;
+
+        wheels.setMotorPowers(Range.clip(v, -1, 1),
+                              Range.clip(v1, -1,1),
+                              Range.clip(v2, -1,1),
+                              Range.clip(v3, -1,1));
+
+    }
 }

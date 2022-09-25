@@ -4,13 +4,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-public class Glisiera {
+public class Slider {
     public enum Height{
         DOWN,
         HIGH
     }
 
-    public DcMotor glisiera;
+    public DcMotor _motor;
 
     public final int ticks = 2000;
 
@@ -24,13 +24,13 @@ public class Glisiera {
 
     public double maxHeight = 2000;
 
-    public Glisiera(HardwareMap hardwareMap){
+    public Slider(HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
 
-        glisiera = hardwareMap.get(DcMotor.class, "glisiera");
+        _motor = hardwareMap.get(DcMotor.class, "glisiera");
 
-        glisiera.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        glisiera.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        _motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        _motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
@@ -38,16 +38,16 @@ public class Glisiera {
         new Thread(() -> {
             synchronized (lock){
                 //so that you can t access multiple threads at the same time
-                int ticksRN = glisiera.getCurrentPosition();
+                int ticksRN = _motor.getCurrentPosition();
                 int ticksdown = ticksRN;
                 flag = false;
 
-                if(height == Height.DOWN) glisiera.setDirection(DcMotorSimple.Direction.REVERSE);
+                if(height == Height.DOWN) _motor.setDirection(DcMotorSimple.Direction.REVERSE);
                 {
 
                     while(ticksRN < ticksdown*2){
-                        glisiera.setPower(0.7);
-                        ticksRN = glisiera.getCurrentPosition();
+                        _motor.setPower(0.7);
+                        ticksRN = _motor.getCurrentPosition();
                     }
 
                     if(ticksRN==ticksdown)flag = true;
@@ -55,17 +55,17 @@ public class Glisiera {
 
                 if(height == Height.HIGH){
 
-                    glisiera.setDirection(DcMotorSimple.Direction.FORWARD);
+                    _motor.setDirection(DcMotorSimple.Direction.FORWARD);
 
                     while(ticksRN < ticks ){
-                        glisiera.setPower(0.7);
-                        ticksRN = glisiera.getCurrentPosition();
+                        _motor.setPower(0.7);
+                        ticksRN = _motor.getCurrentPosition();
                     }
                 }
 
 
-                if(flag==true)glisiera.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                glisiera.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                if(flag==true)_motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                _motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             }
 
         }).start();

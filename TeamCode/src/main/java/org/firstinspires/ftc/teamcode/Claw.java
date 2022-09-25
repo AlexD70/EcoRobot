@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Gheara{
+public class Claw{
 
-    public Servo gheara;
+    public Servo _servo;
 
     private HardwareMap hardwareMap;
 
@@ -20,15 +20,15 @@ public class Gheara{
     public Gheara(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
 
-        gheara = hardwareMap.get(Servo.class, "gheara");
+        _servo = hardwareMap.get(Servo.class, "gheara");
 
     }
 
     public void open(){
         new Thread(() -> {
             synchronized (lock) {
-                gheara.setDirection(Servo.Direction.FORWARD);
-                gheara.setPosition(openPos);
+                _servo.setDirection(Servo.Direction.FORWARD);
+                _servo.setPosition(openPos);
             }}
         ).start();
     }
@@ -36,8 +36,8 @@ public class Gheara{
     public void close(){
         new Thread(() -> {
             synchronized(lock){
-             gheara.setDirection(Servo.Direction.REVERSE);
-             gheara.setPosition(closePos);
+             _servo.setDirection(Servo.Direction.REVERSE);
+             _servo.setPosition(closePos);
         }}
         ).start();
     }

@@ -4,14 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp
+@TeleOp(name = "TeleOp", group = "EcoRobot")
 public class Drive extends LinearOpMode {
 
     public ControllerInput controller;
 
     private Wheels wheels;
-    private Glisiera slider; //funny story am uitat cum se spune la glisiera in engleza
-    private Gheara claw;
+    private Slider slider;
+    private Claw claw;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -19,8 +19,8 @@ public class Drive extends LinearOpMode {
         controller = new ControllerInput(gamepad1);
 
         wheels = new Wheels(hardwareMap);
-        slider = new Glisiera(hardwareMap);
-        claw = new Gheara(hardwareMap);
+        slider = new Slider(hardwareMap);
+        claw = new Claw(hardwareMap);
 
         waitForStart();
 
@@ -29,12 +29,12 @@ public class Drive extends LinearOpMode {
 
             //ridica glisiera in teorie
             while(controller.right_trigger != 0){
-                slider.position(Glisiera.Height.HIGH);
+                slider.position(Slider.Height.HIGH);
             }
 
             //coboara glisiera in teorie
             while(controller.left_trigger != 0){
-                slider.position(Glisiera.Height.DOWN);
+                slider.position(Slider.Height.DOWN);
             }
 
             //deschide gheara in teorie

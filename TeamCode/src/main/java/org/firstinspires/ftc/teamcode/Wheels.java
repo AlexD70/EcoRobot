@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
 
-import com.acmerobotics.roadrunner.drive.MecanumDrive;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -16,7 +15,7 @@ public class Wheels {
     public DcMotor LB;
     public DcMotor RF;
     public DcMotor RB;
-    public DcMotor[] wheels = {LF, LB, RF, RB};
+    public DcMotor[] wheels;
 
     private HardwareMap hardwareMap;
 

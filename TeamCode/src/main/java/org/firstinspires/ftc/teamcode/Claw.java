@@ -17,7 +17,7 @@ public class Claw{
     public double openPos;
     public double closePos;
 
-    public Gheara(HardwareMap hardwareMap) {
+    public Claw(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
 
         _servo = hardwareMap.get(Servo.class, "gheara");
@@ -25,20 +25,14 @@ public class Claw{
     }
 
     public void open(){
-        new Thread(() -> {
-            synchronized (lock) {
-                _servo.setDirection(Servo.Direction.FORWARD);
-                _servo.setPosition(openPos);
-            }}
-        ).start();
+        _servo.setPosition(openPos);
     }
 
     public void close(){
         new Thread(() -> {
-            synchronized(lock){
              _servo.setDirection(Servo.Direction.REVERSE);
              _servo.setPosition(closePos);
-        }}
+        }
         ).start();
     }
 

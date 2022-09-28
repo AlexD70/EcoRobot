@@ -15,7 +15,6 @@ public class Wheels {
     public DcMotor LB;
     public DcMotor RF;
     public DcMotor RB;
-    public DcMotor[] wheels;
 
     private HardwareMap hardwareMap;
 
@@ -28,10 +27,10 @@ public class Wheels {
         RF = hardwareMap.get(DcMotor.class, "RF");
         RB = hardwareMap.get(DcMotor.class, "RB");
 
-        for(DcMotor motor : wheels){
-            motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
+        LF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        LB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        RB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         LF.setDirection(DcMotorSimple.Direction.REVERSE);
         LB.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -39,11 +38,11 @@ public class Wheels {
         RB.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    //voiam sa extend MecanumDrive :/
+    //voiam sa extend MecanumDrive :/    Vlad: Nu, nu voiati sa extindeti nimic
     public void setMotorPowers(double v, double v1, double v2, double v3) {
         LF.setPower(v);
         RF.setPower(v1);
-        LF.setPower(v2);
+        LB.setPower(v2);
         RB.setPower(v3);
     }
 }

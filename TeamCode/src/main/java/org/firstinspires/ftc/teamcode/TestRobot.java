@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode;
-
+	
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -14,13 +14,16 @@ public class TestRobot extends LinearOpMode {
     private Wheels wheels;
     public ControllerInput controller;
     public Claw claw;
+    private final int max = 6800, min = 100;
 
     @Override
     public void runOpMode() throws InterruptedException {
-//        lifter = hardwareMap.get(DcMotorEx.class, "lifter");
-//        lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        lifter.setDirection(DcMotorSimple.Direction.REVERSE);
-//        lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lifter = hardwareMap.get(DcMotorEx.class, "lifter");
+	lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+	lifter.setPower(0d);
+        lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        lifter.setDirection(DcMotorSimple.Direction.REVERSE);
+        lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         wheels = new Wheels(hardwareMap);
         controller = new ControllerInput(gamepad1);
@@ -112,23 +115,16 @@ public class TestRobot extends LinearOpMode {
     }
 
     public void lifter(){
-        double maxTicks = 6800;
+	if (gamepad1.right_trigger > 0.5d && gamepad1.left_trigger > 0.5d){
+	    ;; //pass
+	} else if (-lifter.getCurrentPosition() < this.max && gamepad1.right_trigger > 0.5) {
+	    lifter.setPower(gamepad1.right_trigger * 0.6);
+	    return;
+	} else if (-lifter.getCurrentPosition() > this.min && gamepad1.left_trigger > 0.5) {
+	    lifter.setPower(gamepad1.left_trigger * (-0.6));
+	    return;
+	}
 
-        lifter = hardwareMap.get(DcMotorEx.class, "lifter");
-        lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lifter.setDirection(DcMotorSimple.Direction.REVERSE);
-        lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        if(lifter.getCurrentPosition() > maxTicks && triggerR > 0.05)lifter.setPower(0.0);
-        else if(lifter.getCurrentPosition() < 0 && triggerL > 0.05)lifter.setPower(0.0);
-        else if (triggerR > 0.05 && triggerL < 0.05) { //go up
-            lifter.setPower(triggerR);
-        }
-        else if(triggerL > 0.05 && triggerR < 0.05) { //go down
-            lifter.setPower(-triggerL);
-        }
-        else lifter.setPower(0.0);
-
-
+	lifter.setPower(0d);
     }
 }

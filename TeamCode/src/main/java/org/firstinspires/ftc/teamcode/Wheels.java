@@ -1,25 +1,22 @@
 package org.firstinspires.ftc.teamcode;
 
 import androidx.annotation.NonNull;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.List;
-
 public class Wheels {
 
 
-    public DcMotor LF;
-    public DcMotor LB;
-    public DcMotor RF;
-    public DcMotor RB;
+    public DcMotor LF; // left front
+    public DcMotor LB; // left back
+    public DcMotor RF; // right front
+    public DcMotor RB; // right back
 
     private HardwareMap hardwareMap;
 
-    public Wheels(HardwareMap hardwareMap){
-
+    // constructor handles motor initialisation
+    public Wheels(@NonNull HardwareMap hardwareMap){
         this.hardwareMap = hardwareMap;
 
         LF = hardwareMap.get(DcMotor.class, "LF");
@@ -38,11 +35,11 @@ public class Wheels {
         RB.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
-    //voiam sa extend MecanumDrive :/    Vlad: Nu, nu voiati sa extindeti nimic
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        LF.setPower(v);
-        RF.setPower(v1);
-        LB.setPower(v2);
-        RB.setPower(v3);
+    //"voiam sa extend MecanumDrive :/    Vlad: Nu, nu voiati sa extindeti nimic"
+    public void setMotorPowers(double v1, double v2, double v3, double v4) {
+        LF.setPower(v1);
+        RF.setPower(v2);
+        LB.setPower(v3);
+        RB.setPower(v4);
     }
 }

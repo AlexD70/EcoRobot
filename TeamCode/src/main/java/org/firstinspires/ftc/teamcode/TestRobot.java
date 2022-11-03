@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
-	
+
+// imports
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,117 +12,99 @@ import com.qualcomm.robotcore.util.Range;
 public class TestRobot extends LinearOpMode {
     public DcMotorEx lifter;
     public double triggerL, triggerR;
+
+    // see Wheels.java
     private Wheels wheels;
+
+    // see ControllerInput.java
     public ControllerInput controller;
+
+    // see Claw.java
     public Claw claw;
-    private final int max = 6800, min = 100;
+    private final int max = 6800, min = -50;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        lifter = hardwareMap.get(DcMotorEx.class, "lifter");
+        // lifter initialisation
+	lifter = hardwareMap.get(DcMotorEx.class, "lifter");
 	lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 	lifter.setPower(0d);
         lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         lifter.setDirection(DcMotorSimple.Direction.REVERSE);
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
+        
+        // other initialisations
         wheels = new Wheels(hardwareMap);
         controller = new ControllerInput(gamepad1);
         claw = new Claw(hardwareMap);
 
         waitForStart();
-//        while (opModeIsActive()) {
-//            telemetry.addLine("Started");
-//            telemetry.update();
-//
-//            wheels.RF.setPower(0.8);
-//            sleep(5000);
-//            wheels.RF.setPower(0.0);
-//
-//            telemetry.log().clear();
-//            telemetry.update();
-//
-//            sleep(5000);
-//
-//            wheels.RB.setPower(0.8);
-//            sleep(5000);
-//            wheels.RB.setPower(0.0);
-//
-//            sleep(5000);
-//
-//            wheels.LF.setPower(0.8);
-//            sleep(5000);
-//            wheels.LF.setPower(0.0);
-//
-//            sleep(5000);
-//
-//            wheels.LB.setPower(0.8);
-//            sleep(5000);
-//            wheels.LB.setPower(0.0);
-//
-//            sleep(5000);
-//        }
 
+	// loop
         while (opModeIsActive()) {
+            // get input
             controller.update();
             triggerR = gamepad1.right_trigger;
             triggerL = gamepad1.left_trigger;
-
+            
+	    // handle mecanum wheels
             move();
+
+	    // handle lifter
             lifter();
 
+	    // handle claw
             if(controller.AOnce()) {
-                telemetry.addData("HEre", " xddd");
-                telemetry.update();
                 claw.close();
             }
 
             if(controller.BOnce()) {
                 claw.open();
             }
-
+	
+	    // some data we use for debugging
             telemetry.addData("left", triggerL);
             telemetry.addData("right", triggerR);
-            telemetry.addData("ticks" ,lifter.getCurrentPosition());
+            telemetry.addData("ticks", lifter.getCurrentPosition());
             telemetry.update();
-
-//            if (triggerR > 0.05 && triggerL < 0.05) { //go up
-//                lifter.setPower(triggerR);
-//            }
-//            else if(triggerL > 0.05 && triggerR < 0.05) { //go down
-//                lifter.setPower(-triggerL);
-//            }
-//            else lifter.setPower(0.0);
         }
     }
 
+    // extremely simple mecanum implementation
     public void move(){
 
-        double delta = 0.7;
+        double coefficient = 0.7; // P coefficient
 
         double forward = -gamepad1.left_stick_y;
         double strafe = gamepad1.left_stick_x;
         double turn = gamepad1.right_stick_x;
 
-        double v = forward + strafe + turn;
-        double v1 = forward - strafe - turn;
-        double v2 = forward - strafe + turn;
-        double v3 = forward + strafe - turn;
+        double v1 = forward + strafe + turn;
+        double v2 = forward - strafe - turn;
+        double v3 = forward - strafe + turn;
+        double v4 = forward + strafe - turn;
 
-        wheels.setMotorPowers(Range.clip(v * delta, -1, 1),
-                Range.clip(v1 * delta, -1,1),
-                Range.clip(v2 * delta, -1,1),
-                Range.clip(v3 * delta, -1,1));
+        wheels.setMotorPowers(
+	   // (k > max)?(max):((k < min)?(min):(k))
+	   Range.clip(v1 * coefficient, -1, 1),
+           Range.clip(v2 * coefficient, -1, 1),
+           Range.clip(v3 * coefficient, -1, 1),
+           Range.clip(v4 * coefficient, -1, 1)
+	);
     }
 
     public void lifter(){
-	if (gamepad1.right_trigger > 0.5d && gamepad1.left_trigger > 0.5d){
-	    ;; //pass
-	} else if (-lifter.getCurrentPosition() < this.max && gamepad1.right_trigger > 0.5) {
-	    lifter.setPower(gamepad1.right_trigger * 0.6);
+	
+        double coefficient = 0.6d;
+	double sensitivity_threshold = 0.5d;
+
+	if (gamepad1.right_trigger > sensitivity_threshold && gamepad1.left_trigger > sensitivity_threshold){
+	    ;; // pass
+	} else if (lifter.getCurrentPosition() < this.max && gamepad1.right_trigger > sensitivity_threshold) {
+	    lifter.setPower(gamepad1.right_trigger * coefficient);
 	    return;
-	} else if (-lifter.getCurrentPosition() > this.min && gamepad1.left_trigger > 0.5) {
-	    lifter.setPower(gamepad1.left_trigger * (-0.6));
+	} else if (lifter.getCurrentPosition() > this.min && gamepad1.left_trigger > sensitivity_threshold) {
+	    lifter.setPower(gamepad1.left_trigger * (-coefficient));
 	    return;
 	}
 

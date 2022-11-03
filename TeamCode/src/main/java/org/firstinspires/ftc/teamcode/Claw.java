@@ -13,7 +13,7 @@ public class Claw {
 
     public double initPos = 0.7;
     public double openPos = 0;
-    public double closePos = 0.7;
+    public double closedPos = 0.7;
 
     public Claw(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
@@ -27,7 +27,7 @@ public class Claw {
     }
 
     public void close() {
-        _servo.setPosition(closePos);
+        _servo.setPosition(closedPos);
     }
 
 }

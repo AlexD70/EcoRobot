@@ -11,15 +11,14 @@ public class Claw {
 
     private HardwareMap hardwareMap;
 
-    public double initPos = 0.7;
     public double openPos = 0;
-    public double closedPos = 0.7;
+    public double closedPos = 0.8;
 
     public Claw(HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
 
-        _servo = hardwareMap.get(Servo.class, "gheara");
-        _servo.setPosition(initPos);
+        _servo = hardwareMap.get(Servo.class, "claw");
+        _servo.setPosition(openPos);
     }
 
     public void open() {

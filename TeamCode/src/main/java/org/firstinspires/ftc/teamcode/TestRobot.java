@@ -30,7 +30,7 @@ public class TestRobot extends LinearOpMode {
 	lifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 	lifter.setPower(0d);
         lifter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        lifter.setDirection(DcMotorSimple.Direction.REVERSE);
+        lifter.setDirection(DcMotorSimple.Direction.FORWARD);
         lifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         
         // other initialisations
